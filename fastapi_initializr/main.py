@@ -245,7 +245,7 @@ def main():
         git_choice = questionary.confirm("Initialize a Git repository?").ask()
 
     # Automatically detect terminal type (no manual input)
-    terminal_type = args.terminal or is_linux_based()
+    terminal_type = is_linux_based()
 
     # =====================================================
     # === Execute Setup ==================================
