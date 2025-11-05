@@ -5,12 +5,26 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "fastapi-initializr"
 version = "1.0.0"
-description = "A CLI tool to quickly scaffold FastAPI project structures"
-readme = "README.md"
+description = "A modern CLI tool that instantly scaffolds production-ready FastAPI project structures with best practices, interactive prompts, and optional configurations."
+readme = {file = "README.txt", content-type = "text/markdown"}
 requires-python = ">=3.8"
 license = {text = "MIT"}
 authors = [
   {name = "Saad Sabahuddin", email = "saadmdsabahuddin@gmail.com"}
+]
+keywords = [
+  "fastapi",
+  "initializr",
+  "cli",
+  "project-generator",
+  "scaffold",
+  "template",
+  "web-development",
+  "python-cli",
+  "api",
+  "boilerplate",
+  "framework",
+  "starter-project"
 ]
 dependencies = [
     "questionary",
@@ -21,3 +35,8 @@ dependencies = [
 
 [project.scripts]
 fastapi-initializr = "fastapi_initializr.main:main"
+
+[project.urls]
+Repository="https://github.com/saadmdsabah/fastapi-initializr.git"
+Issues="https://github.com/saadmdsabah/fastapi-initializr/issues"
+DOWNLOAD="https://github.com/saadmdsabah/fastapi-initializr/archive/refs/heads/main.zip"
