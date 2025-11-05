@@ -29,7 +29,6 @@ def main():
         except Exception:
             pass  
 
-    check_for_updates()
 
     # =====================================================
     # === Utility Functions ===============================
@@ -156,6 +155,8 @@ def main():
         print(Fore.GREEN + "   pip install -r requirements.txt")
         print(Fore.GREEN + f"   {startsh_or_startbat(terminal_type)}")
 
+        check_for_updates()
+
     def setup_with_poetry(project_name, init_git, terminal_type):
         os.chdir(project_name)
         safe_run(f"{sys.executable} -m venv .venv")
@@ -178,6 +179,8 @@ def main():
         print(Fore.GREEN + f"   {get_activate_command(terminal_type)}")
         print(Fore.GREEN + "   poetry add $(cat requirements.txt)")
         print(Fore.GREEN + f"   {startsh_or_startbat(terminal_type)}")
+
+        check_for_updates()
 
     def setup_with_uv(project_name, init_git, terminal_type):
         os.chdir(project_name)
@@ -203,6 +206,8 @@ def main():
         print(Fore.GREEN + f"   {get_activate_command(terminal_type)}")
         print(Fore.GREEN + "   uv add -r requirements.txt")
         print(Fore.GREEN + f"   {startsh_or_startbat(terminal_type)}")
+
+        check_for_updates()
 
     def is_linux_based():
         system = platform.system().lower()
