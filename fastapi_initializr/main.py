@@ -33,16 +33,24 @@ def main():
     # =====================================================
     # === Utility Functions ===============================
     # =====================================================
-    def safe_run(cmd, cwd=None, check=True, silent=False):
-        """Run a command with spinner and handle errors."""
+    def safe_run(cmd, cwd=None, check=True,  silent=True,message=None):
+        """Run a command with optional spinner and silent mode."""
         try:
-            if(not silent):
-                with yaspin(text=f"Running: {cmd}", color="cyan"):
-                    subprocess.run(cmd, shell=True, check=check, cwd=cwd)
+            if silent:
+                with yaspin(text=message or f"Running silently: {cmd}", color="cyan"):
+                    subprocess.run(
+                        cmd,
+                        shell=True,
+                        cwd=cwd,
+                        check=check,
+                        stdout=subprocess.DEVNULL,
+                        stderr=subprocess.DEVNULL,
+                    )
             else:
-                subprocess.run(cmd, shell=True, check=check, cwd=cwd)
+                with yaspin(text=message or f"Running: {cmd}", color="cyan"):
+                    subprocess.run(cmd, shell=True, cwd=cwd, check=check)
         except subprocess.CalledProcessError as e:
-            print(Fore.RED + f"❌ Command failed: {cmd}")
+            print(Fore.RED + f"Error: Command failed: {cmd}")
             print(Fore.RED + f"Error: {e}")
             sys.exit(1)
 
@@ -52,7 +60,7 @@ def main():
             with open(path, "w", encoding="utf-8") as f:
                 f.write(content)
         except Exception as e:
-            print(Fore.RED + f"⚠️ Failed to create file {path}: {e}")
+            print(Fore.RED + f"Error: Failed to create file {path}: {e}")
 
     def create_folder_structure(project_name):
         """Create FastAPI folder and file structure."""
@@ -141,10 +149,14 @@ def main():
     # =====================================================
     def setup_with_pip(project_name, use_git, terminal_type):
         os.chdir(project_name)
-        safe_run(f"{sys.executable} -m venv .venv")
+        safe_run(f"{sys.executable} -m venv .venv", message="Creating virtual environment...")
 
         if use_git:
-            safe_run("git init")
+            safe_run("git init", message="Initializing Git repository...")
+        else: 
+            git_dir = os.path.join(os.getcwd(), ".git")
+            if os.path.exists(git_dir):
+                shutil.rmtree(git_dir)
 
         create_file(os.path.join("src", "main.py"), fastapi_main_template())
         create_run_scripts()
@@ -159,17 +171,21 @@ def main():
 
     def setup_with_poetry(project_name, init_git, terminal_type):
         os.chdir(project_name)
-        safe_run(f"{sys.executable} -m venv .venv")
+        safe_run(f"{sys.executable} -m venv .venv",  message="Creating virtual environment...")
 
         system = platform.system().lower()
         python_cmd = ".venv\\Scripts\\python" if "windows" in system else ".venv/bin/python"
         poetry_cmd = ".venv\\Scripts\\poetry" if "windows" in system else ".venv/bin/poetry"
 
-        safe_run(f"{python_cmd} -m pip install poetry", silent=True)
-        safe_run(f"{poetry_cmd} init -n", silent=True)
+        safe_run(f"{python_cmd} -m pip install poetry",  message="Installing Poetry...")
+        safe_run(f"{poetry_cmd} init -n",  message="Initializing Poetry project...")
 
         if init_git:
-            safe_run("git init")
+            safe_run("git init",  message="Initializing Git repository...")
+        else:
+            git_dir = os.path.join(os.getcwd(), ".git")
+            if os.path.exists(git_dir):
+                shutil.rmtree(git_dir)
 
         create_file(os.path.join("src", "main.py"), fastapi_main_template())
         create_run_scripts()
@@ -184,14 +200,14 @@ def main():
 
     def setup_with_uv(project_name, init_git, terminal_type):
         os.chdir(project_name)
-        safe_run(f"{sys.executable} -m venv .venv")
+        safe_run(f"{sys.executable} -m venv .venv",  message="Creating virtual environment...")
 
         system = platform.system().lower()
         python_cmd = ".venv\\Scripts\\python" if "windows" in system else ".venv/bin/python"
         uv_cmd = ".venv\\Scripts\\uv" if "windows" in system else ".venv/bin/uv"
 
-        safe_run(f"{python_cmd} -m pip install uv", silent=True)
-        safe_run(f"{uv_cmd} init", silent=True)
+        safe_run(f"{python_cmd} -m pip install uv",  message="Installing uv...")
+        safe_run(f"{uv_cmd} init",  message="Initializing uv project...")
 
         if not init_git:
             git_dir = os.path.join(os.getcwd(), ".git")
